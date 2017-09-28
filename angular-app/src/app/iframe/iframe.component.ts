@@ -1,19 +1,29 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subscription } from "rxjs/Subscription";
+import { IFrameService } from './iframe.service';
 
 @Component({
   selector: 'app-iframe',
   templateUrl: './iframe.component.html',
-  styleUrls: ['./iframe.component.css']
+  styleUrls: ['./iframe.component.scss']
 })
-export class IframeComponent implements OnInit {
+export class IframeComponent implements OnInit, OnDestroy {
   public url: SafeResourceUrl;
   private counter = 0;
+  public loaded: boolean = false;
+  private subscription: Subscription;
+  public showIFrame: boolean = false;
 
+  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router: Router, private iFrameService: IFrameService) {  }
 
-  constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private router: Router) {
+  loadIFrame(route: ActivatedRoute, sanitizer: DomSanitizer, router: Router) {
+    this.route = route;
+    this.sanitizer = sanitizer;
+    this.router = router;
+    this.showIFrame = true;
+
     this.route.url.subscribe(urlSegments => {
       // Create a unique URL each time so the iframe will detect the change
       this.counter += 1;
@@ -27,7 +37,6 @@ export class IframeComponent implements OnInit {
 
     this.listenForFallbackRoutingEvents();
   }
-
 
   /*
    If the iframed-in app can't resolve a URL itself it will post a message to the parent
@@ -51,5 +60,21 @@ export class IframeComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.loaded = true;
+    }, 5000);
+
+    this.subscription = this.iFrameService.notifyObservable$.subscribe((res) => {
+      if (res.hasOwnProperty('route') && res.hasOwnProperty('sanitizer') && res.hasOwnProperty('router')) {
+        this.loadIFrame(res.route, res.sanitizer, res.router);
+      } else if (res.hasOwnProperty('hideIFrame')) {
+        this.showIFrame = false;
+      }
+    });
   }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
 }

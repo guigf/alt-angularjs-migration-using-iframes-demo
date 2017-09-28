@@ -7,6 +7,11 @@
               url        : "/angularjs",
               templateUrl: './app/counter.html',
               controller : 'CounterCtrl'
+            })
+            .state('text', {
+              url        : "/textangularjs",
+              templateUrl: './app/texto.html',
+              controller : 'TextoCtrl'
             });
 
         $urlRouterProvider.otherwise(function ($injector, $location) {

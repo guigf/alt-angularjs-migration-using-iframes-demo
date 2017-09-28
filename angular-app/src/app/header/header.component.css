@@ -1,3 +1,7 @@
 nav {
   margin-bottom: 2em;
 }
+
+.navegacao {
+  z-index: 999;
+}

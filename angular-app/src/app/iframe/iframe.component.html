@@ -1,2 +1,9 @@
+<div [ngClass]="(showIFrame)?'iframe-show':'iframe-hide'" class="div-iframe">
+  <div *ngIf="loaded">
+    <iframe [attr.src]="url"></iframe>
+  </div>
 
-  <iframe [attr.src]="url"></iframe>
+  <div *ngIf="!loaded">
+    <h1>Loading...</h1>
+  </div>
+</div>

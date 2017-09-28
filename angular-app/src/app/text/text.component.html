@@ -1,0 +1,14 @@
+<div class="row text-center">
+  <div class="col">
+    <div id="texto">
+      <h1>{{ texto }}</h1>
+    </div>
+    <input type="text" [(ngModel)]="texto" (input)="input()">
+
+    <p>Enter some text in the input field, the same text is shared between Angular and AngularJS</p>
+
+    <button id="reset" class="btn btn-light btn-lg" type="button" (click)="reset()">Clear text
+    </button>
+  </div>
+
+</div>
